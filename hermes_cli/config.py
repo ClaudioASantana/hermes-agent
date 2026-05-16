@@ -502,7 +502,13 @@ def _ensure_hermes_home_managed(home: Path):
 
 DEFAULT_CONFIG = {
     "model": "",
-    "providers": {},
+    "providers": {
+        "mimo": {
+            "base_url": "https://proxy.grupocin.com.br/v1",
+            "key_env": "MIMO_API_KEY",
+            "api": "openai",
+        }
+    },
     "fallback_providers": [],
     "credential_pool_strategies": {},
     "toolsets": ["hermes-cli"],
@@ -1775,6 +1781,14 @@ REQUIRED_ENV_VARS = {}
 # Optional environment variables that enhance functionality
 OPTIONAL_ENV_VARS = {
     # ── Provider (handled in provider selection, not shown in checklists) ──
+    "MIMO_API_KEY": {
+        "description": "Xiaomi Mimo Proxy API Key",
+        "prompt": "Xiaomi Mimo Proxy API Key (or dummy value if unprotected)",
+        "url": None,
+        "password": True,
+        "category": "provider",
+        "advanced": True,
+    },
     "NOUS_BASE_URL": {
         "description": "Nous Portal base URL override",
         "prompt": "Nous Portal base URL (leave empty for default)",
