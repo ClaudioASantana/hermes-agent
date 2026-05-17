@@ -118,3 +118,4 @@ ENV PATH="/opt/data/.local/bin:${PATH}"
 RUN mkdir -p /opt/data
 VOLUME [ "/opt/data" ]
 ENTRYPOINT [ "/usr/bin/tini", "-g", "--", "/opt/hermes/docker/entrypoint.sh" ]
+CMD ["dashboard", "--host", "0.0.0.0", "--port", "8000", "--no-open", "--insecure"]
