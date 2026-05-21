@@ -12912,6 +12912,11 @@ Examples:
         help="Accept all prompts (used by --setup-browser to skip the "
              "~400 MB Chromium download confirmation).",
     )
+    acp_parser.add_argument(
+        "--ignore-client-mcp",
+        action="store_true",
+        help="Ignore MCP servers sent by the client, avoiding tool-limit errors.",
+    )
 
     def cmd_acp(args):
         """Launch Hermes Agent as an ACP server."""
@@ -12929,6 +12934,8 @@ Examples:
                 acp_argv.append("--setup-browser")
             if getattr(args, "assume_yes", False):
                 acp_argv.append("--yes")
+            if getattr(args, "ignore_client_mcp", False):
+                acp_argv.append("--ignore-client-mcp")
             acp_main(acp_argv)
         except ImportError:
             print("ACP dependencies not installed.", file=sys.stderr)

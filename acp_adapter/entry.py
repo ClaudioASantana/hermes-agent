@@ -27,6 +27,7 @@ except ModuleNotFoundError:
 import argparse
 import asyncio
 import logging
+import os
 import sys
 from pathlib import Path
 from hermes_constants import get_hermes_home
@@ -136,7 +137,11 @@ def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         action="store_true",
         dest="assume_yes",
         help="Accept all prompts (currently used by --setup-browser to skip the "
-             "~400 MB Chromium download confirmation).",
+    )
+    parser.add_argument(
+        "--ignore-client-mcp",
+        action="store_true",
+        help="Ignore MCP servers sent by the client, avoiding tool-limit errors.",
     )
     return parser.parse_args(argv)
 
@@ -251,6 +256,9 @@ def main(argv: list[str] | None = None) -> None:
         discover_mcp_tools()
     except Exception:
         logger.debug("MCP tool discovery failed at ACP startup", exc_info=True)
+
+    if getattr(args, "ignore_client_mcp", False):
+        os.environ["HERMES_ACP_IGNORE_CLIENT_MCP"] = "1"
 
     agent = HermesACPAgent()
     try:

@@ -753,6 +753,9 @@ class HermesACPAgent(acp.Agent):
         mcp_servers: list[McpServerStdio | McpServerHttp | McpServerSse] | None,
     ) -> None:
         """Register ACP-provided MCP servers and refresh the agent tool surface."""
+        if os.environ.get("HERMES_ACP_IGNORE_CLIENT_MCP") == "1":
+            return
+            
         if not mcp_servers:
             return
 
