@@ -7,16 +7,22 @@ verbatim from hermes_cli/config.py. Must not import from hermes_cli.config.
 DEFAULT_CONFIG = {
     "model": "",
     # ClaudioASantana/hermes-agent fork customization: pre-register our
-    # internal Xiaomi Mimo reverse-proxy as a built-in custom provider so it
-    # works out of the box without editing config.yaml. Unrelated to
-    # upstream's native "xiaomi" provider (see plugins/model-providers/xiaomi
-    # and the XIAOMI_API_KEY/XIAOMI_BASE_URL env vars below) — this points at
-    # our own gateway, not api.xiaomimimo.com directly.
+    # internal manifest gateway (bankai-server, LAN-only) as a built-in
+    # custom provider so it works out of the box without editing
+    # config.yaml. Replaces the older "mimo" proxy customization — we've
+    # consolidated on this single internal gateway, so the old entry was
+    # removed rather than fixed. NOTE: base_url is a LAN IP
+    # (192.168.1.10) — only reachable from machines on that network (e.g.
+    # the standalone API server deploy); it will not resolve elsewhere.
+    # Deliberately no "api"/"api_mode" key here: runtime_provider.py
+    # resolves entry["api"] as a base_url override with HIGHER precedence
+    # than entry["base_url"] (not a wire-format hint as the name suggests),
+    # so setting it silently breaks the real base_url. Leave unset and let
+    # api_mode auto-detect (falls back to chat_completions).
     "providers": {
-        "mimo": {
-            "base_url": "https://proxy.grupocin.com.br/v1",
-            "key_env": "MIMO_API_KEY",
-            "api": "openai",
+        "mnfst": {
+            "base_url": "http://192.168.1.10:2099/v1",
+            "key_env": "MNFST_API_KEY",
         },
     },
     "fallback_providers": [],
@@ -3923,11 +3929,11 @@ DEFAULT_CONFIG = {
 # Optional environment variables that enhance functionality
 OPTIONAL_ENV_VARS = {
     # ── Provider (handled in provider selection, not shown in checklists) ──
-    # ClaudioASantana/hermes-agent fork customization: key for the "mimo"
+    # ClaudioASantana/hermes-agent fork customization: key for the "mnfst"
     # custom provider registered above in DEFAULT_CONFIG.
-    "MIMO_API_KEY": {
-        "description": "Xiaomi Mimo Proxy API Key",
-        "prompt": "Xiaomi Mimo Proxy API Key (or dummy value if unprotected)",
+    "MNFST_API_KEY": {
+        "description": "Internal manifest gateway API Key (LAN-only, bankai-server)",
+        "prompt": "Manifest gateway API Key (or dummy value if unprotected)",
         "url": None,
         "password": True,
         "category": "provider",
